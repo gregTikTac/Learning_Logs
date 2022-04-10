@@ -6,6 +6,9 @@ class Topic(models.Model):
     text = models.CharField(max_length=200, verbose_name='Название темы')
     date_added = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления')
 
+    class Meta():
+        verbose_name_plural = 'Темы'
+
     def __str__(self):
         return self.text
 
@@ -21,4 +24,7 @@ class Entry(models.Model):
 
     def __str__(self):
         """возврат строки"""
-        return f'{self.text[0:50]}...'
+        if len(self.text) > 50:
+            return f'{self.text[0:50]}...'
+        else:
+            return self.text
