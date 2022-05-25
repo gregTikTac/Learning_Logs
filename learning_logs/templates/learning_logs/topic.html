@@ -5,6 +5,9 @@
 <p>Тема: {{ topic }}</p>
 
 <p>Запись:</p>
+<p>
+    <a href="{% url 'learning_logs:new_entry' topic.id %}">Добавить новую запись</a>
+</p>
 <ul>
     {% for entry in entries %}
     <li>
