@@ -2,9 +2,10 @@
     <a href="{% url 'learning_logs:index' %}">Журнал обучения</a> -
     <a href="{% url 'learning_logs:topics' %}">Темы</a> -
     {% if user.is_authenticated %}
-        Приветствую, о юный мыслитель {{ user.username }}
+        Приветствую, о юный мыслитель {{ user.username }}.
         <a href="{% url 'users:logout' %}">Выйти</a>
     {% else %}
+        <a href="{% url 'users:register' %}">Регистрация</a> -
         <a href="{% url 'users:login' %}">Авторизоваться</a>
     {% endif %}
 </p>
