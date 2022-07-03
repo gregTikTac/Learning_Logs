@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect
 from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
+from django.contrib.auth.decorators import login_required
+
 
 def index(request):
     return render(request, 'learning_logs/index.html')
 
 
+@login_required()  # проверяет вошел ли user в систему, после этого выполняет django выполянет topics
 def topics(request):
     """выводит список тем"""
     topics = Topic.objects.order_by('date_added')
@@ -13,6 +16,7 @@ def topics(request):
     return render(request, 'learning_logs/topics.html', context)
 
 
+@login_required()
 def topic(request, topic_id):
     """Выводит одну тему и все ее записи"""
     topic = Topic.objects.get(id=topic_id)
@@ -21,6 +25,7 @@ def topic(request, topic_id):
     return render(request, 'learning_logs/topic.html', context)
 
 
+@login_required()
 def new_topic(request):
     """Определяет новую тему"""
     if request.method != 'POST':
@@ -35,6 +40,7 @@ def new_topic(request):
     return render(request, 'learning_logs/new_topic.html', context)
 
 
+@login_required()
 def new_entry(request, topic_id):
     """Добавляет новую запись"""
     topic = Topic.objects.get(id=topic_id)
@@ -52,11 +58,11 @@ def new_entry(request, topic_id):
     return render(request, 'learning_logs/new_entry.html', context)
 
 
+@login_required()
 def edit_entry(request, entry_id):
     """Редактирует существующую запись"""
     entry = Entry.objects.get(id=entry_id)
     topic = entry.topic
-
     if request.method != 'POST':
         form = EntryForm(instance=entry)
     else:
@@ -67,3 +73,4 @@ def edit_entry(request, entry_id):
 
     context = {'entry': entry, 'topic': topic, 'form': form}
     return render(request, 'learning_logs/edit_entry.html', context)
+
