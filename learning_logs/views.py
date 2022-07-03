@@ -11,7 +11,8 @@ def index(request):
 @login_required()  # проверяет вошел ли user в систему, после этого выполняет django выполянет topics
 def topics(request):
     """выводит список тем"""
-    topics = Topic.objects.order_by('date_added')
+    #  filter извлекает темы только  того юзера, который вошел в систему
+    topics = Topic.objects.filter(owner=request.user).order_by('date_added')
     context = {'topics': topics}
     return render(request, 'learning_logs/topics.html', context)
 
@@ -33,7 +34,9 @@ def new_topic(request):
     else:
         form = TopicForm(data=request.POST)
         if form.is_valid():
-            form.save()
+            new_topic = form.save(commit=False)  # не сохраненям, пока не добавим автора
+            new_topic.owner = request.user  # установка атрибута владельца для пользователя
+            new_topic.save()  # сохранение изменений
             return redirect('learning_logs:topics')
 
     context = {'form': form}
