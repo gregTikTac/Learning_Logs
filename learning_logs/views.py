@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
 from django.contrib.auth.decorators import login_required
@@ -25,6 +25,7 @@ def topic(request, topic_id):
     # проверка того, что тема принадлежит текущему пользователю
     if topic.owner != request.user:
         raise Http404
+
     entries = topic.entry_set.order_by('-date_added')
     context = {'topic': topic, "entries": entries}
     return render(request, 'learning_logs/topic.html', context)
@@ -70,7 +71,9 @@ def edit_entry(request, entry_id):
     """Редактирует существующую запись"""
     entry = Entry.objects.get(id=entry_id)
     topic = entry.topic
-    check_topic_owner()
+    if topic.owner != request.user:
+        raise Http404
+
     if request.method != 'POST':
         form = EntryForm(instance=entry)
     else:
